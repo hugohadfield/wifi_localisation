@@ -20,11 +20,19 @@ def get_wifi() -> List:
 	return wifi_data
 
 
+def valid_wifi(wifi) -> bool:
+	# If ssid has iPhone in it, it's probably a hotspot
+	if "iPhone" in wifi.ssid:
+		return False
+	return True
+
+
 def get_wifi_hashes() -> List[int]:
 	hash_list = []
 	wifi_networks = get_wifi()
 	for wifi in wifi_networks:
-		hash_network(wifi)
+		if valid_wifi(wifi):
+			hash_list.append(hash_network(wifi))
 	return hash_list
 
 
@@ -47,6 +55,7 @@ class GlobalLocaliser:
 		Scan the wifi networks
 		"""
 		networks = get_wifi()
+		networks = [n for n in networks if valid_wifi(n)]
 		return networks
 
 	def locate(self) -> Optional[Tuple[float, float]]:
